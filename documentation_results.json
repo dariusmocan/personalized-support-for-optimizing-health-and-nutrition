@@ -1,0 +1,184 @@
+{
+  "performance": {
+    "single_meal_time": 0.09304094314575195,
+    "full_day_time": 0.32090115547180176,
+    "estimated_week_time": 2.2463080883026123,
+    "daily_results": {
+      "breakfast": {
+        "fitness": 0.7967565954598834,
+        "items_count": 3
+      },
+      "lunch": {
+        "fitness": 0.8684898971190633,
+        "items_count": 4
+      },
+      "dinner": {
+        "fitness": 0.86821543937519,
+        "items_count": 3
+      },
+      "snack": {
+        "fitness": 0.6431536378537096,
+        "items_count": 2
+      }
+    }
+  },
+  "accuracy": {
+    "breakfast": {
+      "avg_deviations": {
+        "calories": 4.033196660735212,
+        "protein": 14.701072396140566,
+        "carbs": 2.618427278108501,
+        "fat": 1.159288699076119
+      },
+      "within_15_percent": {
+        "calories": 100.0,
+        "protein": 40.0,
+        "carbs": 100.0,
+        "fat": 100.0
+      },
+      "within_25_percent": {
+        "calories": 100.0,
+        "protein": 70.0,
+        "carbs": 100.0,
+        "fat": 100.0
+      },
+      "avg_fitness": 0.8244276720318533,
+      "success_rate": 100.0
+    },
+    "lunch": {
+      "avg_deviations": {
+        "calories": 4.538254969617187,
+        "protein": 1.7927571999666938,
+        "carbs": 3.865247736063915,
+        "fat": 2.7660037989235002
+      },
+      "within_15_percent": {
+        "calories": 100.0,
+        "protein": 100.0,
+        "carbs": 100.0,
+        "fat": 100.0
+      },
+      "within_25_percent": {
+        "calories": 100.0,
+        "protein": 100.0,
+        "carbs": 100.0,
+        "fat": 100.0
+      },
+      "avg_fitness": 0.8666836185495242,
+      "success_rate": 100.0
+    },
+    "dinner": {
+      "avg_deviations": {
+        "calories": 3.783219527086222,
+        "protein": 0.8222823048032744,
+        "carbs": 7.542708119189372,
+        "fat": 1.9945901680340392
+      },
+      "within_15_percent": {
+        "calories": 100.0,
+        "protein": 100.0,
+        "carbs": 90.0,
+        "fat": 100.0
+      },
+      "within_25_percent": {
+        "calories": 100.0,
+        "protein": 100.0,
+        "carbs": 100.0,
+        "fat": 100.0
+      },
+      "avg_fitness": 0.86379289443326,
+      "success_rate": 100.0
+    },
+    "snack": {
+      "avg_deviations": {
+        "calories": 1.0204848441701941,
+        "protein": 42.950652690384345,
+        "carbs": 6.644874960762699,
+        "fat": 5.931013528776655
+      },
+      "within_15_percent": {
+        "calories": 100.0,
+        "protein": 0.0,
+        "carbs": 90.0,
+        "fat": 90.0
+      },
+      "within_25_percent": {
+        "calories": 100.0,
+        "protein": 0.0,
+        "carbs": 100.0,
+        "fat": 100.0
+      },
+      "avg_fitness": 0.6170791274919563,
+      "success_rate": 100.0
+    }
+  },
+  "convergence": {
+    "breakfast": {
+      "avg_fitness": 0.8534432679274306,
+      "min_fitness": 0.8269580098086888,
+      "max_fitness": 0.9074046225096712,
+      "convergence_rate": 100.0,
+      "fitness_variance": 0.08044661270098241
+    },
+    "lunch": {
+      "avg_fitness": 0.8793595649701766,
+      "min_fitness": 0.8497941738883394,
+      "max_fitness": 0.9290174593155962,
+      "convergence_rate": 100.0,
+      "fitness_variance": 0.07922328542725676
+    },
+    "dinner": {
+      "avg_fitness": 0.8478814697367397,
+      "min_fitness": 0.8389933095879751,
+      "max_fitness": 0.8606244267770669,
+      "convergence_rate": 100.0,
+      "fitness_variance": 0.02163111718909172
+    },
+    "snack": {
+      "avg_fitness": 0.6194536211138038,
+      "min_fitness": 0.48823915237468785,
+      "max_fitness": 0.7050977030944366,
+      "convergence_rate": 100.0,
+      "fitness_variance": 0.2168585507197488
+    }
+  },
+  "complexity": {
+    "breakfast": {
+      "avg_items": 3.466666666666667,
+      "avg_categories": 3.466666666666667,
+      "complexity_range": [
+        3,
+        4
+      ],
+      "is_snack": false
+    },
+    "lunch": {
+      "avg_items": 3.6,
+      "avg_categories": 3.6,
+      "complexity_range": [
+        3,
+        4
+      ],
+      "is_snack": false
+    },
+    "dinner": {
+      "avg_items": 3.7333333333333334,
+      "avg_categories": 3.7333333333333334,
+      "complexity_range": [
+        3,
+        4
+      ],
+      "is_snack": false
+    },
+    "snack": {
+      "avg_items": 2.0,
+      "avg_categories": 2.0,
+      "complexity_range": [
+        2,
+        2
+      ],
+      "is_snack": true
+    }
+  },
+  "timestamp": "2025-06-15 02:15:07"
+}
