@@ -1,0 +1,52 @@
+
+
+.form-container {
+    margin-top: 20px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #334155;
+}
+
+.form-container input,
+.form-container select {
+    padding: 10px;
+    font-size: 18px;
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.form-container button {
+    margin-top: 10px;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.quiz-intro {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    text-align: center;
+}
+
+.quiz-intro p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #475569;
+}
+
+@media (max-width: 768px) {
+    .form-container input, 
+    .form-container select {
+        font-size: 16px;
+    }
+}

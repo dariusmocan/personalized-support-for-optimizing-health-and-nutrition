@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Personalized Plan | GetFit{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/results.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<!-- Loading Modal -->
+<div id="loadingModal" class="loading-modal">
+    <div class="loading-content">
+        <h3>🧬 Generating Your Genetic Meal Plan...</h3>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p id="loadingText">Initializing genetic algorithm...</p>
+        <div class="dna-spinner"></div>
+        <div class="algorithm-stats">
+            <div class="stat-row">
+                <span>Population Size:</span>
+                <span>130 meal combinations</span>
+            </div>
+            <div class="stat-row">
+                <span>Generations:</span>
+                <span>35 evolution cycles</span>
+            </div>
+            <div class="stat-row">
+                <span>Food Database:</span>
+                <span>650+ ingredients</span>
+            </div>
+            <div class="stat-row">
+                <span>Estimated Time:</span>
+                <span>4-8 seconds</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="top-banner">
+    <div class="container">
+        <h1 class="page-title">Your Personalized Plan</h1>
+        <p class="page-subtitle">Based on your answers, we've created a personalized nutrition plan for you.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="results-grid">
+        <div class="result-item">
+            <div class="result-value">{{ quiz_response.bmr|floatformat:0 }}</div>
+            <div class="result-label">BMR (calories)</div>
+        </div>
+        <div class="result-item">
+            <div class="result-value">{{ quiz_response.tdee|floatformat:0 }}</div>
+            <div class="result-label">TDEE (calories)</div>
+        </div>
+        <div class="result-item">
+            <div class="result-value">{{ quiz_response.target_calories|floatformat:0 }}</div>
+            <div class="result-label">Recommended calories</div>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>What do these numbers mean?</h2>
+        <p><strong>BMR (Basal Metabolic Rate)</strong> represents the number of calories your body burns at rest to maintain vital functions.</p>
+        <p><strong>TDEE (Total Daily Energy Expenditure)</strong> is the total number of calories your body burns daily, including basal metabolism and physical activities.</p>
+        <p><strong>Recommended calories</strong> are adjusted based on your goal: 
+        {% if quiz_response.objective == 1 %}
+            a caloric deficit for weight loss.
+        {% elif quiz_response.objective == 2 %}
+            a caloric surplus for weight gain.
+        {% elif quiz_response.objective == 3 %}
+            a moderate surplus for muscle growth.
+        {% else %}
+            maintenance for body recomposition.
+        {% endif %}
+        </p>
+    </div>
+
+    <div class="macros">
+        <h2>Recommended Macronutrient Distribution</h2>
+        
+        <div class="macro-bar">
+            {% with protein_pct=macros.protein|floatformat:0|add:0 carbs_pct=macros.carbs|floatformat:0|add:0 fat_pct=macros.fat|floatformat:0|add:0 %}
+            {% with total=protein_pct|add:carbs_pct|add:fat_pct %}
+            <div class="macro-protein" style="width: {{ protein_pct }}%"></div>
+            <div class="macro-carbs" style="width: {{ carbs_pct }}%"></div>
+            <div class="macro-fat" style="width: {{ fat_pct }}%"></div>
+            {% endwith %}
+            {% endwith %}
+        </div>
+
+        <div class="macro-details">
+            <div class="macro-item">
+                <div class="macro-color macro-protein"></div>
+                <span>Protein: {{ macros.protein }}g</span>
+            </div>
+            <div class="macro-item">
+                <div class="macro-color macro-carbs"></div>
+                <span>Carbs: {{ macros.carbs }}g</span>
+            </div>
+            <div class="macro-item">
+                <div class="macro-color macro-fat"></div>
+                <span>Fat: {{ macros.fat }}g</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if existing_plan %}
+<div class="card">
+    <div class="existing-plan">
+        <h2>Existing Meal Plan</h2>
+        <p>You already have a meal plan generated on {{ existing_plan.created_at|date:"m/d/Y H:i" }}.</p>
+        <div class="button-container">
+            <a href="{% url 'view_meal_plan' plan_id=existing_plan.id %}" class="button">View Existing Plan</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="actions">
+    <a href="{% url 'quiz_view' %}" class="nav-btn secondary-btn">Modify Answers</a>
+    <a href="{% url 'meal_plan' %}?new_plan=true" class="nav-btn" onclick="showLoadingModal(); return true;">
+        {% if existing_plan %}
+        Regenerate Meal Plan
+        {% else %}
+        Generate Meal Plan
+        {% endif %}
+    </a>
+    <a href="{% url 'home' %}" class="nav-btn secondary-btn">Back to Home Page</a>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/results.js' %}"></script>
+{% endblock %}

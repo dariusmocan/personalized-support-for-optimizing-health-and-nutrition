@@ -1,0 +1,450 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Food Journal | GetFit{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/journal.css' %}">
+{% endblock %}
+
+{% block body_class %}journal-page{% endblock %}
+
+{% block content %}
+<div class="top-banner">
+    <div class="container">
+        <h1 class="page-title">Food Journal</h1>
+        <p class="page-subtitle">Track your daily food intake and monitor your calorie consumption</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="date-selector">
+            <label for="journal-date">Select date:</label>
+            <input type="date" id="journal-date" value="{{ selected_date|date:'Y-m-d' }}" onchange="changeDate(this.value)">
+        </div>
+        
+        <div class="calories-summary">
+            <div class="summary-item">
+                <span class="summary-value">{{ journal.target_calories|default:"-"|floatformat:0 }}</span>
+                <span class="summary-label">Target Calories</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-value">{{ journal.total_calories|floatformat:0 }}</span>
+                <span class="summary-label">Consumed</span>
+            </div>
+            {% if journal.target_calories %}
+            <div class="summary-item">
+                <span class="summary-value {% if journal.remaining_calories < 0 %}negative{% endif %}">{{ journal.remaining_calories|floatformat:0 }}</span>
+                <span class="summary-label">Remaining</span>
+            </div>
+            {% endif %}
+            
+            <!-- protein -->
+            <div class="summary-item macro-summary">
+                <div class="macro-consumed">
+                    <span class="summary-value">{{ journal.total_protein|floatformat:0 }}g</span>
+                    <span class="summary-label">Protein</span>
+                </div>
+                <div class="macro-target">
+                    <div class="progress-bar">
+                        <div class="progress" style="width: {% widthratio journal.total_protein journal.target_protein|default:1 100 %}%"></div>
+                    </div>
+                    <span class="target-value">of {{ journal.target_protein|default:"-"|floatformat:0 }}g goal</span>
+                </div>
+            </div>
+            
+            <!-- carbs -->
+            <div class="summary-item macro-summary">
+                <div class="macro-consumed">
+                    <span class="summary-value">{{ journal.total_carbs|floatformat:0 }}g</span>
+                    <span class="summary-label">Carbs</span>
+                </div>
+                <div class="macro-target">
+                    <div class="progress-bar">
+                        <div class="progress" style="width: {% widthratio journal.total_carbs journal.target_carbs|default:1 100 %}%"></div>
+                    </div>
+                    <span class="target-value">of {{ journal.target_carbs|default:"-"|floatformat:0 }}g goal</span>
+                </div>
+            </div>
+            
+            <!-- fats -->
+            <div class="summary-item macro-summary">
+                <div class="macro-consumed">
+                    <span class="summary-value">{{ journal.total_fat|floatformat:0 }}g</span>
+                    <span class="summary-label">Fat</span>
+                </div>
+                <div class="macro-target">
+                    <div class="progress-bar">
+                        <div class="progress" style="width: {% widthratio journal.total_fat journal.target_fat|default:1 100 %}%"></div>
+                    </div>
+                    <span class="target-value">of {{ journal.target_fat|default:"-"|floatformat:0 }}g goal</span>
+                </div>
+            </div>
+        </div>
+        
+        {% for meal_type, meal_data in foods_by_meal.items %}
+        <div class="meal-section">
+            <div class="meal-header">
+                <h3 class="meal-title">
+                    {% if meal_type == 'breakfast' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                    </svg>
+                    {% elif meal_type == 'lunch' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                    {% elif meal_type == 'dinner' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8.21 13.89L7 23l2.5-1.5L12 23l2.5-1.5L17 23l-1.21-9.11"></path>
+                        <path d="M11 10.38A3.007 3.007 0 0 1 14 7h1a3.01 3.01 0 0 1 3 3 3.01 3.01 0 0 1-3 3h-1"></path>
+                        <path d="M4 15h4"></path>
+                        <path d="M20 15h-4"></path>
+                        <path d="M6 7h2a6 6 0 1 1 0 12H6"></path>
+                    </svg>
+                    {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3a6 6 0 0 0-6 9v3a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-3a6 6 0 0 0-6-9"></path>
+                        <path d="M15 9h.01"></path>
+                        <path d="M15 15h.01"></path>
+                        <path d="M12 6v1"></path>
+                    </svg>
+                    {% endif %}
+                    {{ meal_data.name }}
+                </h3>
+                <span class="meal-calories">{{ meal_data.total_calories|floatformat:0 }} kcal</span>
+            </div>
+            <div class="meal-content">
+                {% if meal_data.items %}
+                    <ul class="food-list">
+                        {% for item in meal_data.items %}
+                        <li class="food-item" id="food-item-{{ item.id }}">
+                            <div class="food-info">
+                                <span class="food-name">{{ item.food.name }}</span>
+                                <span class="food-details">{{ item.amount|floatformat:0 }}g</span>
+                            </div>
+                            <div class="food-macros">
+                                <span class="food-macro">{{ item.calories|floatformat:0 }} kcal</span>
+                                <span class="food-macro">P: {{ item.protein|floatformat:1 }}g</span>
+                                <span class="food-macro">C: {{ item.carbs|floatformat:1 }}g</span>
+                                <span class="food-macro">F: {{ item.fat|floatformat:1 }}g</span>
+                            </div>
+                            <div class="food-actions">
+                                <!-- next line works well, but the IDE identifies it as JavaScript, not DTL-->
+                                <!-- @ts-ignore -->
+                                <button class="delete-btn" onclick="deleteFood({{ item.id }})">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-meal">No foods recorded for this meal</div>
+                {% endif %}
+                <div class="form-actions">
+                    <button class="button secondary" onclick="showAddFoodForm('{{ meal_type }}')">Add Food to {{ meal_data.name }}</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="search-section">
+            <h2>Add Food to Journal</h2>
+            <div class="search-container">
+                <span class="search-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </span>
+                <input type="text" id="food-search" class="search-input" placeholder="Search for a food..." oninput="searchFoods(this.value)">
+            </div>
+            <div id="search-results" class="search-results"></div>
+            
+            <div id="food-form" class="food-form">
+                <h3>Add Food</h3>
+                <div id="selected-food-info" class="selected-food-info"></div>
+                
+                <form id="add-food-form" onsubmit="addFoodToJournal(event)">
+                    <input type="hidden" id="food-id" name="food-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="amount" class="form-label">Amount (g)</label>
+                            <input type="number" id="amount" name="amount" class="form-control" value="100" min="1" max="2000" step="1" required oninput="updateNutritionInfo()">
+                        </div>
+                        <div class="form-group">
+                            <label for="meal-type" class="form-label">Meal</label>
+                            <select id="meal-type" name="meal-type" class="form-control" required>
+                                {% for meal_type, meal_name in meal_types %}
+                                    <option value="{{ meal_type }}">{{ meal_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="nutritional-info">
+                        <div class="nutritional-row">
+                            <span class="nutritional-label">Calories:</span>
+                            <span id="calculated-calories" class="nutritional-value">0 kcal</span>
+                        </div>
+                        <div class="nutritional-row">
+                            <span class="nutritional-label">Protein:</span>
+                            <span id="calculated-protein" class="nutritional-value">0g</span>
+                        </div>
+                        <div class="nutritional-row">
+                            <span class="nutritional-label">Carbs:</span>
+                            <span id="calculated-carbs" class="nutritional-value">0g</span>
+                        </div>
+                        <div class="nutritional-row">
+                            <span class="nutritional-label">Fat:</span>
+                            <span id="calculated-fat" class="nutritional-value">0g</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="button secondary" onclick="cancelAddFood()">Cancel</button>
+                        <button type="submit" class="button">Add Food</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Global variables for storing selected food
+    let selectedFood = null;
+    let searchTimeout = null;
+    
+    // Function for changing date
+    function changeDate(dateStr) {
+        window.location.href = `{% url 'food_journal' %}?date=${dateStr}`;
+    }
+    
+    // Function for searching foods
+    async function searchFoods(query) {
+        // Clear timeout to prevent multiple rapid searches
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        // If query is empty or too short, hide results
+        if (!query || query.length < 2) {
+            document.getElementById('search-results').innerHTML = '';
+            document.getElementById('search-results').classList.remove('active');
+            return;
+        }
+        
+        // Set timeout to reduce number of requests
+        searchTimeout = setTimeout(async () => {
+            try {
+                const response = await fetch(`{% url 'search_foods' %}?query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                const resultsElement = document.getElementById('search-results');
+                
+                // Clear previous results
+                resultsElement.innerHTML = '';
+                
+                if (data.results.length === 0) {
+                    resultsElement.innerHTML = '<div class="search-item"><span class="search-item-name">No results found</span></div>';
+                } else {
+                    // Add search results
+                    data.results.forEach(food => {
+                        const foodElement = document.createElement('div');
+                        foodElement.className = 'search-item';
+                        foodElement.onclick = () => selectFood(food);
+                        
+                        const categoryDisplay = food.category ? `<span>(${food.category})</span>` : '';
+                        
+                        foodElement.innerHTML = `
+                            <div class="search-item-name">${food.name} ${categoryDisplay}</div>
+                            <div class="search-item-details">
+                                ${food.calories_per_100g.toFixed(0)} kcal | 
+                                P: ${food.protein_per_100g.toFixed(1)}g | 
+                                C: ${food.carbs_per_100g.toFixed(1)}g | 
+                                F: ${food.fat_per_100g.toFixed(1)}g per 100g
+                            </div>
+                        `;
+                        
+                        resultsElement.appendChild(foodElement);
+                    });
+                }
+                
+                // Show results
+                resultsElement.classList.add('active');
+                
+            } catch (error) {
+                console.error('Error searching foods:', error);
+            }
+        }, 300);
+    }
+    
+    // Function for selecting a food from results
+    function selectFood(food) {
+        selectedFood = food;
+        
+        // Show add form
+        document.getElementById('food-form').classList.add('active');
+        document.getElementById('search-results').classList.remove('active');
+        document.getElementById('food-id').value = food.id;
+        
+        // Display selected food information
+        document.getElementById('selected-food-info').innerHTML = `
+            <h4>${food.name}</h4>
+            <p>${food.category || 'Uncategorized'}</p>
+            <p>Per 100g: ${food.calories_per_100g.toFixed(0)} kcal, 
+               ${food.protein_per_100g.toFixed(1)}g protein, 
+               ${food.carbs_per_100g.toFixed(1)}g carbs, 
+               ${food.fat_per_100g.toFixed(1)}g fat</p>
+        `;
+        
+        // Update nutritional information
+        updateNutritionInfo();
+    }
+    
+    // Function for updating nutritional information based on amount
+    function updateNutritionInfo() {
+        if (!selectedFood) return;
+        
+        const amount = parseFloat(document.getElementById('amount').value) || 100;
+        const ratio = amount / 100;
+        
+        document.getElementById('calculated-calories').textContent = 
+            `${(selectedFood.calories_per_100g * ratio).toFixed(0)} kcal`;
+            
+        document.getElementById('calculated-protein').textContent = 
+            `${(selectedFood.protein_per_100g * ratio).toFixed(1)}g`;
+            
+        document.getElementById('calculated-carbs').textContent = 
+            `${(selectedFood.carbs_per_100g * ratio).toFixed(1)}g`;
+            
+        document.getElementById('calculated-fat').textContent = 
+            `${(selectedFood.fat_per_100g * ratio).toFixed(1)}g`;
+    }
+    
+    // Function for canceling food addition
+    function cancelAddFood() {
+        document.getElementById('food-form').classList.remove('active');
+        selectedFood = null;
+        document.getElementById('food-search').value = '';
+    }
+    
+    // Function for adding food to journal
+    async function addFoodToJournal(event) {
+        event.preventDefault();
+        
+        if (!selectedFood) return;
+        
+        const foodId = document.getElementById('food-id').value;
+        const amount = parseFloat(document.getElementById('amount').value) || 100;
+        const mealType = document.getElementById('meal-type').value;
+        const date = document.getElementById('journal-date').value;
+        
+        try {
+            const response = await fetch('{% url "add_food_to_journal" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    food_id: foodId,
+                    amount: amount,
+                    meal_type: mealType,
+                    date: date
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Reload page to display new food
+                window.location.reload();
+            } else {
+                alert('Error adding food: ' + data.error);
+            }
+            
+        } catch (error) {
+            console.error('Error adding food to journal:', error);
+            alert('Error adding food to journal. Please try again.');
+        }
+    }
+    
+    // Function for deleting food from journal
+    async function deleteFood(itemId) {
+        if (!confirm('Are you sure you want to delete this food item?')) {
+            return;
+        }
+        
+        try {
+            // With this line
+            const response = await fetch(`{% url 'delete_food_from_journal' entry_id=0 %}`.replace('0', itemId), {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Remove food from DOM
+                const foodItem = document.getElementById(`food-item-${itemId}`);
+                if (foodItem) {
+                    foodItem.remove();
+                }
+                
+                // Reload page to update totals
+                window.location.reload();
+            } else {
+                alert('Error deleting food: ' + data.error);
+            }
+            
+        } catch (error) {
+            console.error('Error deleting food:', error);
+            alert('Error deleting food. Please try again.');
+        }
+    }
+    
+    // Function to show food addition form for a specific meal type
+    function showAddFoodForm(mealType) {
+        document.getElementById('meal-type').value = mealType;
+        document.getElementById('food-search').focus();
+        // Scroll to search section
+        document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Helper function for getting CSRF cookie value
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

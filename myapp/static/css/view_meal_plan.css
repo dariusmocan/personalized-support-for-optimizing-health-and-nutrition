@@ -1,0 +1,138 @@
+
+
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.tab {
+    padding: 0.75rem 1.5rem;
+    background-color: #e5e7eb;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    flex: 1 0 auto;
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.tab.active {
+    background-color: #2563eb;
+    color: white;
+}
+
+.tab:hover:not(.active) {
+    background-color: #d1d5db;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.meal {
+    margin-bottom: 2rem;
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+}
+
+.meal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.meal-header h3 {
+    margin: 0;
+}
+
+.meal-totals {
+    display: flex;
+    gap: 1rem;
+    font-weight: bold;
+}
+
+.meal-totals span {
+    padding: 0.25rem 0.75rem;
+    background-color: #e5e7eb;
+    border-radius: 0.25rem;
+}
+
+.food-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.food-item:last-child {
+    border-bottom: none;
+}
+
+.food-name {
+    flex: 2;
+}
+
+.food-amount {
+    flex: 1;
+    text-align: center;
+}
+
+.food-macros {
+    flex: 3;
+    display: flex;
+    justify-content: space-between;
+    text-align: right;
+}
+
+.food-macros span {
+    margin-left: 1rem;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.day-summary {
+    background-color: #e0f2fe;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #3b82f6;
+}
+
+@media (max-width: 768px) {
+    .food-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .food-macros {
+        width: 100%;
+        justify-content: space-around;
+    }
+    
+    .food-amount {
+        text-align: left;
+    }
+    
+    .meal-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Plan Alimentar | GetFit{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/view_meal_plan.css' %}">
+{% endblock %}
+
+{% block body_class %}meal-plan-body{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="card">
+            <h1>Personalized Meal Plan</h1>
+            <p>Your meal plan contains balanced meals that meet your caloric needs of 
+            <strong>{{ meal_plan.target_calories|floatformat:0 }} calories</strong> and recommended macronutrient distribution.</p>
+            
+            <div class="tabs">
+                {% for day in days %}
+                <div class="tab {% if forloop.first %}active{% endif %}" 
+                     onclick="showTab('day{{ forloop.counter }}')">{{ day.day }}</div>
+                {% endfor %}
+            </div>
+            
+            {% for day in days %}
+            <div id="day{{ forloop.counter }}" class="tab-content {% if forloop.first %}active{% endif %}">
+                <h2>{{ day.day }}</h2>
+                
+                {% for meal in day.meals %}
+                <div class="meal">
+                    <div class="meal-header">
+                        <h3>{{ meal.type }}</h3>
+                        <div class="meal-totals">
+                            <span>{{ meal.totals.calories|floatformat:0 }} kcal</span>
+                            <span>{{ meal.totals.protein|floatformat:0 }}g P</span>
+                            <span>{{ meal.totals.carbs|floatformat:0 }}g C</span>
+                            <span>{{ meal.totals.fat|floatformat:0 }}g F</span>
+                        </div>
+                    </div>
+                    
+                    {% for food_item in meal.food_items %}
+                    <div class="food-item">
+                        <div class="food-name">{{ food_item.food.name }}</div>
+                        <div class="food-amount">{{ food_item.amount|floatformat:0 }}g</div>
+                        <div class="food-macros">
+                            <span>{{ food_item.calories|floatformat:0 }} kcal</span>
+                            <span>{{ food_item.protein|floatformat:1 }}g P</span>
+                            <span>{{ food_item.carbs|floatformat:1 }}g C</span>
+                            <span>{{ food_item.fat|floatformat:1 }}g F</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            
+            <div class="button-container">
+                <div class="actions">
+                    <a href="{% url 'quiz_view' %}" class="button">Modify Meal Plan</a>
+                    <a href="{% url 'results_view' %}" class="button">Back to Results</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+    
+{% block scripts %}
+    <script>
+        function showTab(tabId) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show the selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Update tabs styling
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mark the selected tab as active
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+{% endblock %}

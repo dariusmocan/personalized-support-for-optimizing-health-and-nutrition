@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quiz | GetFit{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/quiz.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Complete the Quiz Form</h1>
+
+<div class="quiz-intro">
+    <p>Answer a few questions to help us create a personalized plan for you.</p>
+</div>
+
+<div class="card">
+    <form method="POST" action="{% url 'quiz_view' %}">
+        {% csrf_token %}
+        
+        <div class="form-container">
+            <label for="id_age">Age:</label>
+            <input type="number" name="age" id="id_age" required value="{{ form.age.value }}">
+        </div>
+
+        <div class="form-container">
+            <label for="id_height">Height (cm):</label>
+            <input type="number" name="height" id="id_height" required value="{{ form.height.value }}">
+        </div>
+
+        <div class="form-container">
+            <label for="id_weight">Weight (kg):</label>
+            <input type="number" step="0.1" name="weight" id="id_weight" required value="{{ form.weight.value }}">
+        </div>
+
+        <div class="form-container">
+            <label for="id_gender">Gender:</label>
+            <select name="gender" id="id_gender" required>
+                <option value="masculin" {% if form.gender.value == 'masculin' %}selected{% endif %}>Male</option>
+                <option value="feminin" {% if form.gender.value == 'feminin' %}selected{% endif %}>Female</option>
+            </select>
+        </div>
+
+        <div class="form-container">
+            <label for="id_objective">Goal:</label>
+            <select name="objective" id="id_objective" required>
+                <option value="1" {% if form.objective.value == 1 %}selected{% endif %}>Weight Loss</option>
+                <option value="2" {% if form.objective.value == 2 %}selected{% endif %}>Weight Gain</option>
+                <option value="3" {% if form.objective.value == 3 %}selected{% endif %}>Muscle Growth</option>
+                <option value="4" {% if form.objective.value == 4 %}selected{% endif %}>Body Recomposition</option>
+            </select>
+        </div>
+
+        <div class="form-container">
+            <label for="id_activity_level">Physical Activity Level:</label>
+            <select name="activity_level" id="id_activity_level" required>
+                <option value="1" {% if form.activity_level.value == 1 %}selected{% endif %}>Sedentary (minimal activity, desk job)</option>
+                <option value="2" {% if form.activity_level.value == 2 %}selected{% endif %}>Lightly Active (light exercise 1-3 days/week)</option>
+                <option value="3" {% if form.activity_level.value == 3 %}selected{% endif %}>Moderately Active (moderate exercise 3-5 days/week)</option>
+                <option value="4" {% if form.activity_level.value == 4 %}selected{% endif %}>Very Active (intense exercise 6-7 days/week)</option>
+                <option value="5" {% if form.activity_level.value == 5 %}selected{% endif %}>Extremely Active (intense daily exercise, physical job or 2x/day training)</option>
+            </select>
+        </div>
+
+        <div class="form-container">
+            <button type="submit" class="button">Submit Answers</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
