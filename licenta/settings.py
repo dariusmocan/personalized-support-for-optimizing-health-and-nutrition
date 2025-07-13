@@ -26,7 +26,7 @@ if not SECRET_KEY:
     # Auto-generate pentru development
     from django.core.management.utils import get_random_secret_key
     SECRET_KEY = get_random_secret_key()
-    print("⚠️ Using auto-generated SECRET_KEY for development")
+    print("Using auto-generated SECRET_KEY for development")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
